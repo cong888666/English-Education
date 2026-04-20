@@ -1,48 +1,22 @@
-import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useUserStore } from './store';
-import { supabase } from './lib/supabase';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Vocabulary from './pages/Vocabulary';
+import Grammar from './pages/Grammar';
+import Listening from './pages/Listening';
 
 function App() {
-  const { user, setUser, setLoading } = useUserStore();
-
-  // Check if user is already logged in
-  useEffect(() => {
-    const checkUser = async () => {
-      setLoading(true);
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          setUser(session.user);
-        }
-      } catch (error) {
-        console.error('Error checking user session:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkUser();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user || null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [setUser, setLoading]);
-
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <div className="min-h-screen">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/vocabulary" element={<Vocabulary />} />
+          <Route path="/grammar" element={<Grammar />} />
+          <Route path="/listening" element={<Listening />} />
+        </Routes>
+      </div>
     </Router>
   );
 }

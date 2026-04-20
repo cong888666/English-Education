@@ -1,140 +1,172 @@
-import { useEffect } from 'react';
-import { useUserStore, useCourseStore, useLearningStore } from '../store';
-import { supabase } from '../lib/supabase';
+import { Link } from 'react-router-dom';
+import { BookOpen, Volume2, MessageSquare, TrendingUp } from 'lucide-react';
+import { vocabWords, grammarTopics, listeningMaterials, speakingTopics, dailySentences } from '../data/englishContent';
 
 const Home = () => {
-  const { user } = useUserStore();
-  const { courses, setCourses, setLoading } = useCourseStore();
-  const { progress } = useLearningStore();
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('courses')
-          .select('*');
-        
-        if (error) throw error;
-        setCourses(data || []);
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, [setCourses, setLoading]);
+  const todaySentence = dailySentences[new Date().getDate() % dailySentences.length];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-20">
+      <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-24">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              多语种沉浸式学习平台
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              英语学习平台
             </h1>
-            <p className="text-xl mb-8 opacity-90">
-              支持英语、日语、韩语等主流语言，打造个性化学习体验
+            <p className="text-xl md:text-2xl mb-10 opacity-95">
+              轻松学英语，每天进步多一点
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <button className="bg-white text-indigo-700 px-8 py-3 rounded-lg font-medium hover:bg-opacity-90 transition">
+            <div className="flex flex-wrap justify-center gap-6">
+              <Link
+                to="/vocabulary"
+                className="bg-white text-blue-700 px-10 py-4 rounded-2xl font-semibold text-lg hover:shadow-xl transition-all hover:-translate-y-1"
+              >
                 开始学习
-              </button>
-              <button className="bg-transparent border-2 border-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:bg-opacity-10 transition">
-                了解更多
-              </button>
+              </Link>
+              <Link
+                to="/grammar"
+                className="bg-transparent border-3 border-white text-white px-10 py-4 rounded-2xl font-semibold text-lg hover:bg-white hover:text-blue-700 transition-all hover:-translate-y-1"
+              >
+                查看课程
+              </Link>
             </div>
-          </div>
-        </div>
-        
-        {/* Language Selection Carousel */}
-        <div className="container mx-auto px-4 mt-16">
-          <h2 className="text-2xl font-semibold mb-6 text-center">选择你的目标语言</h2>
-          <div className="flex overflow-x-auto gap-4 pb-4">
-            {['English', 'Japanese', 'Korean', 'Spanish', 'French', 'German'].map((language) => (
-              <div key={language} className="flex-shrink-0 bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6 w-48 text-center hover:bg-opacity-20 transition">
-                <h3 className="text-xl font-medium mb-2">{language}</h3>
-                <p className="text-sm opacity-80">开始你的学习之旅</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
-      {/* Course Recommendations */}
-      <section className="py-16 container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-10 text-center text-gray-800">推荐课程</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {courses.map((course) => (
-            <div key={course.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition">
-              <div className="h-48 bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center">
-                <h3 className="text-2xl font-bold text-white">{course.title}</h3>
+      {/* Daily Sentence */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">每日一句</h2>
+            <p className="text-gray-600 mb-8">每天积累一句，英语自然好</p>
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-3xl p-8 shadow-lg border border-blue-100">
+              <p className="text-2xl font-medium text-gray-800 mb-4">{todaySentence.english}</p>
+              <p className="text-xl text-gray-600">{todaySentence.chinese}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Learning Sections */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">学习模块</h2>
+            <p className="text-xl text-gray-600">选择你感兴趣的内容开始学习</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Vocabulary */}
+            <Link
+              to="/vocabulary"
+              className="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 border border-blue-100"
+            >
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <BookOpen className="w-10 h-10 text-white" />
               </div>
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    {course.language}
-                  </span>
-                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    {course.level}
-                  </span>
-                </div>
-                <p className="text-gray-600 mb-4">{course.description}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">{course.duration} 小时</span>
-                  <span className="font-medium">
-                    {course.is_premium ? '¥99.99' : '免费'}
-                  </span>
-                </div>
-                <div className="mt-4">
-                  <button className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
-                    查看课程
-                  </button>
-                </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">词汇学习</h3>
+              <p className="text-gray-600 mb-4">{vocabWords.length} 个单词</p>
+              <p className="text-gray-500 text-sm">闪卡学习 + 互动练习</p>
+              <div className="mt-4 text-blue-600 font-semibold flex items-center gap-2">
+                开始学习
+                <TrendingUp className="w-4 h-4" />
+              </div>
+            </Link>
+
+            {/* Grammar */}
+            <Link
+              to="/grammar"
+              className="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 border border-indigo-100"
+            >
+              <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <MessageSquare className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">语法学习</h3>
+              <p className="text-gray-600 mb-4">{grammarTopics.length} 个语法点</p>
+              <p className="text-gray-500 text-sm">规则讲解 + 练习巩固</p>
+              <div className="mt-4 text-indigo-600 font-semibold flex items-center gap-2">
+                开始学习
+                <TrendingUp className="w-4 h-4" />
+              </div>
+            </Link>
+
+            {/* Listening */}
+            <Link
+              to="/listening"
+              className="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 border border-pink-100"
+            >
+              <div className="w-20 h-20 bg-gradient-to-r from-pink-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Volume2 className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">听力练习</h3>
+              <p className="text-gray-600 mb-4">{listeningMaterials.length} 篇听力材料</p>
+              <p className="text-gray-500 text-sm">音频播放 + 理解练习</p>
+              <div className="mt-4 text-pink-600 font-semibold flex items-center gap-2">
+                开始学习
+                <TrendingUp className="w-4 h-4" />
+              </div>
+            </Link>
+
+            {/* Speaking */}
+            <div className="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 border border-orange-100 opacity-50">
+              <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-yellow-600 rounded-2xl flex items-center justify-center mb-6">
+                <MessageSquare className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">口语练习</h3>
+              <p className="text-gray-600 mb-4">敬请期待</p>
+              <p className="text-gray-500 text-sm">话题练习 + 发音指导</p>
+              <div className="mt-4 text-orange-600 font-semibold">
+                即将上线
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
       {/* Progress Overview */}
-      {user && (
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-10 text-center text-gray-800">学习进度</h2>
-            <div className="max-w-3xl mx-auto">
-              {courses.map((course) => (
-                <div key={course.id} className="mb-6">
-                  <div className="flex justify-between mb-2">
-                    <span className="font-medium">{course.title}</span>
-                    <span>{progress[course.id] || 0}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div 
-                      className="bg-indigo-600 h-2.5 rounded-full" 
-                      style={{ width: `${progress[course.id] || 0}%` }}
-                    ></div>
-                  </div>
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">学习统计</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl">
+                <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                  {vocabWords.length}
                 </div>
-              ))}
+                <p className="text-gray-600 text-lg">单词总数</p>
+              </div>
+              <div className="text-center p-8 bg-gradient-to-br from-indigo-50 to-pink-50 rounded-3xl">
+                <div className="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                  {grammarTopics.length}
+                </div>
+                <p className="text-gray-600 text-lg">语法点总数</p>
+              </div>
+              <div className="text-center p-8 bg-gradient-to-br from-pink-50 to-orange-50 rounded-3xl">
+                <div className="text-5xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent mb-2">
+                  {listeningMaterials.length}
+                </div>
+                <p className="text-gray-600 text-lg">听力材料数</p>
+              </div>
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      {/* Call to Action */}
-      <section className="py-16 bg-gradient-to-r from-indigo-600 to-purple-700 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">准备好开始学习了吗？</h2>
-          <p className="text-xl mb-8 opacity-90">
-            注册账号，获取个性化学习路径
-          </p>
-          <button className="bg-white text-indigo-700 px-8 py-3 rounded-lg font-medium hover:bg-opacity-90 transition">
-            立即注册
-          </button>
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">开始你的英语学习之旅</h2>
+            <p className="text-xl mb-10 opacity-90">每天坚持学习，你会看到显著的进步</p>
+            <Link
+              to="/vocabulary"
+              className="inline-block bg-white text-blue-700 px-12 py-5 rounded-2xl font-semibold text-xl hover:shadow-2xl transition-all hover:scale-105"
+            >
+              立即开始学习
+            </Link>
+          </div>
         </div>
       </section>
     </div>
